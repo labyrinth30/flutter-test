@@ -27,5 +27,21 @@ void main() {
       // isA는 타입 검사, 테스트할 때 주로 사용
       expect(await fetchAlbum(client), isA<Album>());
     });
+    test('404 에러인 경우에는 예외를 발생시켜야한다', () async {
+      final client = MockClient();
+      when(client
+              .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1')))
+          .thenAnswer(
+        (_) async => http.Response(
+          'Not Found',
+          404,
+        ),
+      );
+      expect(
+        // 함수 자체를 써줘야지 결과를 넣는 게 아니므로 await를 쓰지 않음
+        fetchAlbum(client),
+        throwsException,
+      );
+    });
   });
 }
